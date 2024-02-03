@@ -1,8 +1,32 @@
 {
     "manifest_version": 3,
-    "name": "Sample Extension",
+    "name": "Pacman",
     "version": "0.0.1",
-    "description": "",
-    "author": ["Om Sinkar","Souptik Taran"]
-
+    "description": "Empower users by detecting and eliminating dark patterns, fostering transparency and ethical design in the digital space.",
+    "author": ["Om Sinkar", "Souptik Taran"],
+    "icons" : {
+        "48": "/Images/Icons/default.png"
+    },
+    "action" : {
+        "default_icon" : {
+            "48": "/Images/Icons/default.png"
+        },
+        "default_title" : "Empowering users by detecting and eliminating dark patterns, fostering transparency and ethical design in the digital space",
+        "default_popup" : ""
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["contentScript.js"], 
+            "css": ["contentCSS.css"]
+        }
+    ],
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "alarms" 
+    ]
 }
