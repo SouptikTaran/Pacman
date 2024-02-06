@@ -27,6 +27,7 @@
     "permissions": [
         "activeTab",
         "tabs",
-        "alarms" 
+        "alarms",
+        "webNavigation"
     ]
 }

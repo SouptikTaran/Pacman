@@ -1,71 +1,91 @@
-
-// document.querySelectorAll('a')
-
-// const images = document.getElementsByTagName('img');
-// for (let i = 0; i < images.length; i++) {
-//   const src = images[i].getAttribute('src');
-//   const alt = images[i].getAttribute('alt');
-//   if (src) {
-//     // alert(`The source of image ${i+1} is **${src}** and the alternate text is **${alt}**`);
-//     images[i].style.backgroundColor = 'red';
-//     images[i].style.border = '2px solid red';
-//   }
-// }
-
-
-// const links = document.querySelectorAll('a');
-
-// for (let i = 0; i < links.length; i++) {
-//   links[i].addEventListener('click', (event) => {
-//     links[i].style.border = '5px solid green';
-//     event.preventDefault();
-//     const currentHostname = window.location.hostname;
-//     const linkHostname = new URL(event.target.href).hostname;
-//     console.log("Link Hostname: " + linkHostname + "\nCurrent Hostname: " + currentHostname);
-    
-//     const hostnameRegex = /^https?:\/\/(?:[a-zA-Z0-9]+\.)+[a-zA-Z0-9]+$/;
-//     if (hostnameRegex.test(event.target.href) && currentHostname === linkHostname) {
-//       alert('Hi');
-//       window.location.href = event.target.href;
-//     } else {
-//       alert('Link is from a different website. Action blocked.');
-//     }
-//   });
-// }
-
-
 function highlightSponsoredWords() {
-  // List of sponsored words (customize as needed)
   const sponsoredWords = ["Sponsored", "promoted"];
-
-  // Helper function to replace matched words with highlighted version
   function highlightText(node) {
     if (node.nodeType === Node.TEXT_NODE) {
       const replacedText = node.nodeValue.replace(
         new RegExp(`\\b(${sponsoredWords.join("|")})\\b`, "gi"),
-        match => match ? `<span style="border: 5px solid red">${match}</span>`: match
+        match => match ? `<span style="border: 5px solid red; border-image: animation: borderAnimation 4s infinite linear;">${match}</span>` : match
       );
-
-      // Check if the text was actually replaced
       if (replacedText !== node.nodeValue) {
         const newNode = document.createElement("span");
         newNode.innerHTML = replacedText;
-
-        // Insert the new node before the original text node
         node.parentNode.insertBefore(newNode, node);
-
-        // Remove the original text node
         node.parentNode.removeChild(node);
       }
     } else if (node.nodeType === Node.ELEMENT_NODE) {
-      // Recursively process child nodes
       for (const childNode of node.childNodes) {
         highlightText(childNode);
       }
     }
   }
-
-  // Start processing from the body element
   highlightText(document.body);
 }
 highlightSponsoredWords();
+var maindomain;
+function extractDomain(url) {
+  const domainRegex = new RegExp(/^(?:https?:\/\/)?(?:www\.)?([^\/.]+)/);
+  // console.log(url);
+  // console.log(domainRegex);
+  const mat = url.match(domainRegex);
+  return mat ? mat[1] : null;
+}
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message.message === "myMessage") {
+    console.log("recieved message");
+  }
+  let c = 0;
+  maindomain = message.message;
+  maindomain = extractDomain(maindomain);
+  // console.log(maindomain);
+  let links = document.getElementsByTagName("a");
+  for (let i = 0; i < links.length; i++) {
+    // console.log(links[i].href);
+    const domain = extractDomain(links[i].href);
+    // console.log(domain);
+    if (domain != maindomain && domain) {
+      console.log(domain);
+      c++;
+    }
+  }
+  console.log(c);
+  if (c >= links.length) {
+    console.log("Website is harmful.");
+  }
+  else {
+    console.log("Website is safe");
+  }
+});
+let x = document.head;
+var cwflag = 1;
+const metaTags = x.querySelectorAll('meta');
+const ecommerceKeywords = ['shop', 'buy', 'store', 'purchase', 'order', 'checkout',
+  'product', 'online', 'sale', 'retail', 'marketplace',
+  'e-shop', 'e-store', 'catalog', 'cart', 'deal', 'discount',
+  'shipping', 'delivery', 'add to cart', 'browse', 'inventory',
+  'shopping', 'check out', 'shop now', 'get it now', 'limited stock', 'stock'];
+metaTags.forEach(metaTag => {
+  let nameAttribute = metaTag.getAttribute('name');
+  let contentAttribute = metaTag.getAttribute('content');
+  if (nameAttribute) {
+
+    nameAttribute = nameAttribute.toLowerCase();
+    if (contentAttribute) {
+
+      contentAttribute = contentAttribute.toLowerCase();
+      const isECommerce = ecommerceKeywords.some(keyword => contentAttribute.includes(keyword));
+      if (!isECommerce) {
+        cwflag = 0;
+        
+      }
+    }
+  }
+  console.log(`Meta Tag Name: ${nameAttribute}, Content: ${contentAttribute}`);
+});
+if(!cwflag){
+  console.log("hhjv")
+  chrome.runtime.sendMessage({checkwebsite: 0}, function(res){
+    console.log(res)
+  })
+}
+
+
