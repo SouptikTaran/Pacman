@@ -1,3 +1,4 @@
+const storage = chrome.storage.session ? chrome.storage.session : chrome.storage.local;
 chrome.tabs.onActivated.addListener(async function (tabId, changeInfo, tab) {
     try {
         const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -13,15 +14,15 @@ chrome.tabs.onUpdated.addListener(async function (tabId, changeInfo, tab) {
         console.error("Error:", error);
     }
 });
-chrome.runtime.onMessage.addListener((req, sender, sendRes)=>{
-    console.log(req);
+chrome.runtime.onMessage.addListener((mess, sender, sendRes)=>{
+    console.log(mess);
     console.log(sender);
     console.log(sendRes);
     if(req.checkwebsite == 0){
         chrome.tabs.query({active:true, windowType:"normal", currentWindow: true},function(d){
             var tabId = d[0].id;
             chrome.action.setBadgeText( { text: "jhkn" } );
-            chrome.action.setIcon({path: '/Images/Icons/icongrey.png', tabId: tabId});1
+            
         })
     }
     sendRes({checkwebsite: 1})

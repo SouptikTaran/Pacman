@@ -12,7 +12,7 @@
             "48": "/Images/Icons/default.png"
         },
         "default_title" : "Empowering users by detecting and eliminating dark patterns, fostering transparency and ethical design in the digital space",
-        "default_popup" : ""
+        "default_popup" : "popup.html"
     },
     "background": {
         "service_worker": "background.js"
@@ -28,6 +28,7 @@
         "activeTab",
         "tabs",
         "alarms",
-        "webNavigation"
+        "webNavigation",
+        "storage"
     ]
 }

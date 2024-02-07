@@ -3,15 +3,15 @@ function highlightSponsoredWords() {
   function highlightText(node) {
     if (node.nodeType === Node.TEXT_NODE) {
       const replacedText = node.nodeValue.replace(
-        new RegExp(`\\b(${sponsoredWords.join("|")})\\b`, "gi"),
+        new RegExp(`/(?:\d{1,2}\s*:\s*){1,3}\d{1,2}|(?:\d{1,2}\s*(?:days?|hours?|minutes?|seconds?|tage?|stunden?|minuten?|sekunden?|[a-zA-Z]{1,3}\.?)(?:\s*und)?\s*){2,4}`, "gi"),
         match => match ? `<span style="border: 5px solid red; border-image: animation: borderAnimation 4s infinite linear;">${match}</span>` : match
       );
-      if (replacedText !== node.nodeValue) {
-        const newNode = document.createElement("span");
-        newNode.innerHTML = replacedText;
-        node.parentNode.insertBefore(newNode, node);
-        node.parentNode.removeChild(node);
-      }
+      // if (replacedText !== node.nodeValue) {
+      //   const newNode = document.createElement("span");
+      //   newNode.innerHTML = replacedText;
+      //   node.parentNode.insertBefore(newNode, node);
+      //   node.parentNode.removeChild(node);
+      // }
     } else if (node.nodeType === Node.ELEMENT_NODE) {
       for (const childNode of node.childNodes) {
         highlightText(childNode);
@@ -23,7 +23,8 @@ function highlightSponsoredWords() {
 highlightSponsoredWords();
 var maindomain;
 function extractDomain(url) {
-  const domainRegex = new RegExp(/^(?:https?:\/\/)?(?:www\.)?([^\/.]+)/);
+  // const domainRegex = new RegExp(/^(?:https?:\/\/)?(?:www\.)?([^\/.]+)/);
+  const domainRegex = new RegExp(/(?:\d{1,2}\s*:\s*){1,3}\d{1,2}|(?:\d{1,2}\s*(?:days?|hours?|minutes?|seconds?|tage?|stunden?|minuten?|sekunden?|[a-zA-Z]{1,3}\.?)(?:\s*und)?\s*){2,4}/gi);
   // console.log(url);
   // console.log(domainRegex);
   const mat = url.match(domainRegex);
